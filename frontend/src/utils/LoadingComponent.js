@@ -1,6 +1,6 @@
-import React from "react";
-import { css } from "@emotion/react";
-import RiseLoader from "react-spinners/CircleLoader";
+import React from 'react';
+import { css } from '@emotion/react';
+import RiseLoader from 'react-spinners/CircleLoader';
 
 //css
 const override = css`

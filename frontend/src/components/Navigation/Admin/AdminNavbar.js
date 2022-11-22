@@ -1,37 +1,37 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { Fragment } from "react";
-import { Disclosure, Menu, Transition } from "@headlessui/react";
-import { useDispatch } from "react-redux";
+import { Fragment } from 'react';
+import { Disclosure, Menu, Transition } from '@headlessui/react';
+import { useDispatch } from 'react-redux';
 
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 import {
   BellIcon,
   MenuIcon,
   XIcon,
   BookOpenIcon,
   LogoutIcon,
-} from "@heroicons/react/outline";
-import { PlusIcon } from "@heroicons/react/solid";
-import { logoutAction } from "../../../redux/slices/users/usersSlices";
+} from '@heroicons/react/outline';
+import { PlusIcon } from '@heroicons/react/solid';
+import { logoutAction } from '../../../redux/slices/users/usersSlices';
 
 const navigation = [
-  { name: "Home", href: "/", current: true },
-  { name: "Create", href: "/create-post", current: false },
-  { name: "Posts", href: "/posts", current: false },
-  { name: "Authors", href: "/users", current: false },
-  { name: "Add Category", href: "/add-category", current: false },
-  { name: "Category List", href: "/category-list", current: false },
+  { name: 'Home', href: '/', current: true },
+  { name: 'Create', href: '/create-post', current: false },
+  { name: 'Posts', href: '/posts', current: false },
+  { name: 'Authors', href: '/users', current: false },
+  { name: 'Add Category', href: '/add-category', current: false },
+  { name: 'Category List', href: '/category-list', current: false },
 ];
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
+  return classes.filter(Boolean).join(' ');
 }
 
-const AdminNavbar = () => {
+const AdminNavbar = ({ isLogin }) => {
   //Navigation
   const userNavigation = [
-    { name: "Your Profile", href: `/profile` },
-    { name: "Change your password", href: "/update-password" },
+    { name: 'Your Profile', href: `/profile/${isLogin?._id}` },
+    { name: 'Change your password', href: '/update-password' },
   ];
   //logout
   const dispatch = useDispatch();
@@ -58,17 +58,17 @@ const AdminNavbar = () => {
                   <BookOpenIcon className="h-10 w-10 text-yellow-200" />
                 </div>
                 <div className="hidden md:ml-6 md:flex md:items-center md:space-x-4">
-                  {navigation.map(item => (
+                  {navigation.map((item) => (
                     <Link
                       key={item.name}
                       to={item.href}
                       className={classNames(
                         item.current
-                          ? "bg-gray-900 text-white"
-                          : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                        "px-3 py-2 rounded-md text-sm font-medium"
+                          ? 'bg-gray-900 text-white'
+                          : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                        'px-3 py-2 rounded-md text-sm font-medium'
                       )}
-                      aria-current={item.current ? "page" : undefined}
+                      aria-current={item.current ? 'page' : undefined}
                     >
                       {item.name}
                     </Link>
@@ -112,7 +112,7 @@ const AdminNavbar = () => {
                             <span className="sr-only">Open user menu</span>
                             <img
                               className="h-8 w-8 rounded-full"
-                              // src={userAuth?.profilePhoto}
+                              src={isLogin?.profilePhoto}
                               alt="Admin Profile"
                             />
                           </Menu.Button>
@@ -131,14 +131,14 @@ const AdminNavbar = () => {
                             static
                             className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
                           >
-                            {userNavigation.map(item => (
+                            {userNavigation.map((item) => (
                               <Menu.Item key={item.name}>
                                 {({ active }) => (
                                   <a
                                     href={item.href}
                                     className={classNames(
-                                      active ? "bg-gray-100" : "",
-                                      "block px-4 py-2 text-sm text-gray-700"
+                                      active ? 'bg-gray-100' : '',
+                                      'block px-4 py-2 text-sm text-gray-700'
                                     )}
                                   >
                                     {item.name}
@@ -158,17 +158,17 @@ const AdminNavbar = () => {
 
           <Disclosure.Panel className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              {navigation.map(item => (
+              {navigation.map((item) => (
                 <Link
                   to={`${item.href}`}
                   key={item.name}
                   className={classNames(
                     item.current
-                      ? "bg-gray-900 text-white"
-                      : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                    "block px-3 py-2 rounded-md text-base font-medium"
+                      ? 'bg-gray-900 text-white'
+                      : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                    'block px-3 py-2 rounded-md text-base font-medium'
                   )}
-                  aria-current={item.current ? "page" : undefined}
+                  aria-current={item.current ? 'page' : undefined}
                 >
                   {item.name}
                 </Link>
@@ -194,7 +194,7 @@ const AdminNavbar = () => {
                 </button>
               </div>
               <div className="mt-3 px-2 space-y-1 sm:px-3">
-                {userNavigation.map(item => (
+                {userNavigation.map((item) => (
                   <a
                     key={item.name}
                     href={item.href}

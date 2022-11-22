@@ -1,17 +1,17 @@
-import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import { PencilAltIcon } from "@heroicons/react/outline";
-import { fetchCategoriesAction } from "../../redux/slices/category/categorySlice";
-import DateFormatter from "../../utils/DateFormatter";
-import LoadingComponent from "../../utils/LoadingComponent";
+import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { PencilAltIcon } from '@heroicons/react/outline';
+import { fetchCategoriesAction } from '../../redux/slices/category/categorySlice';
+import DateFormatter from '../../utils/DateFormatter';
+import LoadingComponent from '../../utils/LoadingComponent';
 
 const CategoryList = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchCategoriesAction());
   }, [dispatch]);
-  const category = useSelector(state => state?.category);
+  const category = useSelector((state) => state?.category);
 
   const { categoryList, loading, appErr, serverErr } = category;
 
@@ -64,7 +64,7 @@ const CategoryList = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {categoryList?.map(category => (
+                    {categoryList?.map((category) => (
                       <tr className="bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
@@ -77,7 +77,7 @@ const CategoryList = () => {
                             </div>
                             <div className="ml-4">
                               <div className="text-sm font-medium text-gray-900">
-                                {category?.user?.firstName}{" "}
+                                {category?.user?.firstName}{' '}
                                 {category?.user?.lastName}
                               </div>
                               <div className="text-sm text-gray-500">

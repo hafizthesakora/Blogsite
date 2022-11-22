@@ -1,15 +1,15 @@
-import { createAsyncThunk, createSlice, createAction } from "@reduxjs/toolkit";
-import axios from "axios";
-import baseUrl from "../../../utils/baseURL";
+import { createAsyncThunk, createSlice, createAction } from '@reduxjs/toolkit';
+import axios from 'axios';
+import baseUrl from '../../../utils/baseURL';
 //Create Post action
 //action to redirect
-const resetPost = createAction("category/reset");
-const resetPostEdit = createAction("post/reset");
-const resetPostDelete = createAction("post/delete");
+const resetPost = createAction('category/reset');
+const resetPostEdit = createAction('post/reset');
+const resetPostDelete = createAction('post/delete');
 
 // create
 export const createpostAction = createAsyncThunk(
-  "post/created",
+  'post/created',
   async (post, { rejectWithValue, getState, dispatch }) => {
     console.log(post);
     //get user token
@@ -23,10 +23,10 @@ export const createpostAction = createAsyncThunk(
     try {
       //http call
       const formData = new FormData();
-      formData.append("title", post?.title);
-      formData.append("description", post?.description);
-      formData.append("category", post?.category);
-      formData.append("image", post?.image);
+      formData.append('title', post?.title);
+      formData.append('description', post?.description);
+      formData.append('category', post?.category);
+      formData.append('image', post?.image);
 
       const { data } = await axios.post(
         `${baseUrl}/api/posts`,
@@ -43,11 +43,9 @@ export const createpostAction = createAsyncThunk(
   }
 );
 
-
-
 // UPDATE
 export const updatePostAction = createAsyncThunk(
-  "post/updated",
+  'post/updated',
   async (post, { rejectWithValue, getState, dispatch }) => {
     console.log(post);
     //get user token
@@ -66,7 +64,7 @@ export const updatePostAction = createAsyncThunk(
         config
       );
       //dispatch action
-     dispatch(resetPostEdit());
+      dispatch(resetPostEdit());
       return data;
     } catch (error) {
       if (!error?.response) throw error;
@@ -77,7 +75,7 @@ export const updatePostAction = createAsyncThunk(
 
 // Delete
 export const deletePostAction = createAsyncThunk(
-  "post/delete",
+  'post/delete',
   async (postId, { rejectWithValue, getState, dispatch }) => {
     //get user token
     const user = getState()?.users;
@@ -103,15 +101,13 @@ export const deletePostAction = createAsyncThunk(
   }
 );
 
-
-
 // fetch all Posts
 export const fetchPostsAction = createAsyncThunk(
-  "post/list",
+  'post/list',
   async (category, { rejectWithValue, getState, dispatch }) => {
     try {
       const { data } = await axios.get(
-        `${baseUrl}/api/posts?category=${category}`,
+        `${baseUrl}/api/posts?category=${category}`
       );
       return data;
     } catch (error) {
@@ -123,12 +119,10 @@ export const fetchPostsAction = createAsyncThunk(
 
 // fetch a Post Detail
 export const fetchPostDetailsAction = createAsyncThunk(
-  "post/detail",
+  'post/detail',
   async (id, { rejectWithValue, getState, dispatch }) => {
     try {
-      const { data } = await axios.get(
-        `${baseUrl}/api/posts/${id}`,
-      );
+      const { data } = await axios.get(`${baseUrl}/api/posts/${id}`);
       return data;
     } catch (error) {
       if (!error?.response) throw error;
@@ -139,65 +133,62 @@ export const fetchPostDetailsAction = createAsyncThunk(
 
 // Add likes to post
 export const toggleAddLikesToPost = createAsyncThunk(
-  'post/like', 
-  async (
-    postId, 
-    {rejectWithValue, getState, dispatch}) => {
-   // get user token
-   const user = getState()?.users;
-   const {userAuth} = user;
-   const config = {
-    headers: {
-      Authorization: `Bearer ${userAuth?.token}`,
-    },
-   };
-   try {
-    const { data} = await axios.put(
-      `${baseUrl}/api/posts/likes`, 
-      {postId}, 
-      config
-    );
-    return data;
-   } catch (error) {
-     if(!error?.response) throw error;
-     return rejectWithValue(error?.response?.data);
-   }
-});
+  'post/like',
+  async (postId, { rejectWithValue, getState, dispatch }) => {
+    // get user token
+    const user = getState()?.users;
+    const { userAuth } = user;
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userAuth?.token}`,
+      },
+    };
+    try {
+      const { data } = await axios.put(
+        `${baseUrl}/api/posts/likes`,
+        { postId },
+        config
+      );
+      return data;
+    } catch (error) {
+      if (!error?.response) throw error;
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
 
 // Add Dislikes to post
 export const toggleAddDislikesToPost = createAsyncThunk(
-  'post/dislike', 
-  async (
-    postId, 
-    {rejectWithValue, getState, dispatch}) => {
-   // get user token
-   const user = getState()?.users;
-   const {userAuth} = user;
-   const config = {
-    headers: {
-      Authorization: `Bearer ${userAuth?.token}`,
-    },
-   };
-   try {
-    const { data} = await axios.put(
-      `${baseUrl}/api/posts/dislikes`, 
-      {postId}, 
-      config
-    );
-    return data;
-   } catch (error) {
-     if(!error?.response) throw error;
-     return rejectWithValue(error?.response?.data);
-   }
-});
+  'post/dislike',
+  async (postId, { rejectWithValue, getState, dispatch }) => {
+    // get user token
+    const user = getState()?.users;
+    const { userAuth } = user;
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userAuth?.token}`,
+      },
+    };
+    try {
+      const { data } = await axios.put(
+        `${baseUrl}/api/posts/dislikes`,
+        { postId },
+        config
+      );
+      return data;
+    } catch (error) {
+      if (!error?.response) throw error;
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
 
 //slice
 
 const postSlice = createSlice({
-  name: "post",
+  name: 'post',
   initialState: {},
-  extraReducers: builder => {
-
+  extraReducers: (builder) => {
     // CREATE POST
     builder.addCase(createpostAction.pending, (state, action) => {
       state.loading = true;
@@ -218,9 +209,8 @@ const postSlice = createSlice({
       state.serverErr = action?.error?.message;
     });
 
-
-     // UPDATE POST
-     builder.addCase(updatePostAction.pending, (state, action) => {
+    // UPDATE POST
+    builder.addCase(updatePostAction.pending, (state, action) => {
       state.loading = true;
     });
     builder.addCase(resetPostEdit, (state, action) => {
@@ -239,30 +229,28 @@ const postSlice = createSlice({
       state.serverErr = action?.error?.message;
     });
 
+    // DELETE POST
+    builder.addCase(deletePostAction.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(resetPostDelete, (state, action) => {
+      state.isDeleted = true;
+    });
+    builder.addCase(deletePostAction.fulfilled, (state, action) => {
+      state.postUpdated = action?.payload;
+      state.isDeleted = false;
+      state.loading = false;
+      state.appErr = undefined;
+      state.serverErr = undefined;
+    });
+    builder.addCase(deletePostAction.rejected, (state, action) => {
+      state.loading = false;
+      state.appErr = action?.payload?.message;
+      state.serverErr = action?.error?.message;
+    });
 
-      // DELETE POST
-      builder.addCase(deletePostAction.pending, (state, action) => {
-        state.loading = true;
-      });
-      builder.addCase(resetPostDelete, (state, action) => {
-        state.isDeleted = true;
-      });
-      builder.addCase(deletePostAction.fulfilled, (state, action) => {
-        state.postUpdated = action?.payload;
-        state.isDeleted = false;
-        state.loading = false;
-        state.appErr = undefined;
-        state.serverErr = undefined;
-      });
-      builder.addCase(deletePostAction.rejected, (state, action) => {
-        state.loading = false;
-        state.appErr = action?.payload?.message;
-        state.serverErr = action?.error?.message;
-      });
-
-
-     // FETCH ALL POST
-     builder.addCase(fetchPostsAction.pending, (state, action) => {
+    // FETCH ALL POST
+    builder.addCase(fetchPostsAction.pending, (state, action) => {
       state.loading = true;
     });
     builder.addCase(fetchPostsAction.fulfilled, (state, action) => {
@@ -277,56 +265,53 @@ const postSlice = createSlice({
       state.serverErr = action?.error?.message;
     });
 
+    // FETCH POST DETAILS
+    builder.addCase(fetchPostDetailsAction.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(fetchPostDetailsAction.fulfilled, (state, action) => {
+      state.postDetails = action?.payload;
+      state.loading = false;
+      state.appErr = undefined;
+      state.serverErr = undefined;
+    });
+    builder.addCase(fetchPostDetailsAction.rejected, (state, action) => {
+      state.loading = false;
+      state.appErr = action?.payload?.message;
+      state.serverErr = action?.error?.message;
+    });
 
-      // FETCH POST DETAILS
-      builder.addCase(fetchPostDetailsAction.pending, (state, action) => {
-        state.loading = true;
-      });
-      builder.addCase(fetchPostDetailsAction.fulfilled, (state, action) => {
-        state.postDetails = action?.payload;
-        state.loading = false;
-        state.appErr = undefined;
-        state.serverErr = undefined;
-      });
-      builder.addCase(fetchPostDetailsAction.rejected, (state, action) => {
-        state.loading = false;
-        state.appErr = action?.payload?.message;
-        state.serverErr = action?.error?.message;
-      });
+    // LIKE POST
+    builder.addCase(toggleAddLikesToPost.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(toggleAddLikesToPost.fulfilled, (state, action) => {
+      state.likes = action?.payload;
+      state.loading = false;
+      state.appErr = undefined;
+      state.serverErr = undefined;
+    });
+    builder.addCase(toggleAddLikesToPost.rejected, (state, action) => {
+      state.loading = false;
+      state.appErr = action?.payload?.message;
+      state.serverErr = action?.error?.message;
+    });
 
-
-      // LIKE POST
-      builder.addCase(toggleAddLikesToPost.pending, (state, action) => {
-        state.loading = true;
-      });
-      builder.addCase(toggleAddLikesToPost.fulfilled, (state, action) => {
-        state.likes = action?.payload;
-        state.loading = false;
-        state.appErr = undefined;
-        state.serverErr = undefined;
-      });
-      builder.addCase(toggleAddLikesToPost.rejected, (state, action) => {
-        state.loading = false;
-        state.appErr = action?.payload?.message;
-        state.serverErr = action?.error?.message;
-      });
-
-
-       // DISLIKE POST
-       builder.addCase(toggleAddDislikesToPost.pending, (state, action) => {
-        state.loading = true;
-      });
-      builder.addCase(toggleAddDislikesToPost.fulfilled, (state, action) => {
-        state.dislikes = action?.payload;
-        state.loading = false;
-        state.appErr = undefined;
-        state.serverErr = undefined;
-      });
-      builder.addCase(toggleAddDislikesToPost.rejected, (state, action) => {
-        state.loading = false;
-        state.appErr = action?.payload?.message;
-        state.serverErr = action?.error?.message;
-      });
+    // DISLIKE POST
+    builder.addCase(toggleAddDislikesToPost.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(toggleAddDislikesToPost.fulfilled, (state, action) => {
+      state.dislikes = action?.payload;
+      state.loading = false;
+      state.appErr = undefined;
+      state.serverErr = undefined;
+    });
+    builder.addCase(toggleAddDislikesToPost.rejected, (state, action) => {
+      state.loading = false;
+      state.appErr = action?.payload?.message;
+      state.serverErr = action?.error?.message;
+    });
   },
 });
 

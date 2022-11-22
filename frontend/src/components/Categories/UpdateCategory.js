@@ -1,18 +1,18 @@
-import { useEffect } from "react";
-import { Redirect } from "react-router-dom";
-import { PlusCircleIcon, BookOpenIcon } from "@heroicons/react/solid";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from 'react';
+import { Redirect } from 'react-router-dom';
+import { PlusCircleIcon, BookOpenIcon } from '@heroicons/react/solid';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchCategoryAction,
   updateCategoriesAction,
   deleteCategoriesAction,
-} from "../../redux/slices/category/categorySlice";
+} from '../../redux/slices/category/categorySlice';
 
 //Form schema
 const formSchema = Yup.object({
-  title: Yup.string().required("Title is required"),
+  title: Yup.string().required('Title is required'),
 });
 
 const UpdateCategory = ({
@@ -27,7 +27,7 @@ const UpdateCategory = ({
   }, []);
 
   //get data from store
-  const state = useSelector(state => state?.category);
+  const state = useSelector((state) => state?.category);
 
   const { loading, appErr, serverErr, category, isEdited, isDeleted } = state;
 
@@ -37,7 +37,7 @@ const UpdateCategory = ({
     initialValues: {
       title: category?.title,
     },
-    onSubmit: values => {
+    onSubmit: (values) => {
       //build up the date for update
 
       //dispath the action
@@ -81,8 +81,8 @@ const UpdateCategory = ({
               {/* Title */}
               <input
                 value={formik.values.title}
-                onChange={formik.handleChange("title")}
-                onBlur={formik.handleBlur("title")}
+                onChange={formik.handleChange('title')}
+                onBlur={formik.handleBlur('title')}
                 type="text"
                 autoComplete="text"
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-center focus:z-10 sm:text-sm"

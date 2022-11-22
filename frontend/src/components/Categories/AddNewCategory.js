@@ -1,13 +1,13 @@
-import { PlusCircleIcon, BookOpenIcon } from "@heroicons/react/solid";
-import { useFormik } from "formik";
-import { Redirect } from "react-router-dom";
-import * as Yup from "yup";
-import { useDispatch, useSelector } from "react-redux";
-import { createCategoryAction } from "../../redux/slices/category/categorySlice";
+import { PlusCircleIcon, BookOpenIcon } from '@heroicons/react/solid';
+import { useFormik } from 'formik';
+import { Redirect } from 'react-router-dom';
+import * as Yup from 'yup';
+import { useDispatch, useSelector } from 'react-redux';
+import { createCategoryAction } from '../../redux/slices/category/categorySlice';
 
 //Form schema
 const formSchema = Yup.object({
-  title: Yup.string().required("Title is required"),
+  title: Yup.string().required('Title is required'),
 });
 
 const AddNewCategory = () => {
@@ -15,9 +15,9 @@ const AddNewCategory = () => {
   //formik
   const formik = useFormik({
     initialValues: {
-      title: "",
+      title: '',
     },
-    onSubmit: values => {
+    onSubmit: (values) => {
       //dispath the action
       dispatch(createCategoryAction(values));
     },
@@ -25,7 +25,7 @@ const AddNewCategory = () => {
   });
 
   //get data from store
-  const state = useSelector(state => state?.category);
+  const state = useSelector((state) => state?.category);
 
   const { loading, appErr, serverErr, isCreated } = state;
   //redirect
@@ -63,8 +63,8 @@ const AddNewCategory = () => {
               {/* Title */}
               <input
                 value={formik.values.title}
-                onChange={formik.handleChange("title")}
-                onBlur={formik.handleBlur("title")}
+                onChange={formik.handleChange('title')}
+                onBlur={formik.handleBlur('title')}
                 type="text"
                 autoComplete="text"
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-center focus:z-10 sm:text-sm"

@@ -1,18 +1,18 @@
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import Dropzone from "react-dropzone";
-import { Redirect } from "react-router-dom";
-import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
-import { createpostAction } from "../../redux/slices/posts/postSlices";
-import CategoryDropDown from "../Categories/CategoryDropDown";
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import Dropzone from 'react-dropzone';
+import { Redirect } from 'react-router-dom';
+import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+import { createpostAction } from '../../redux/slices/posts/postSlices';
+import CategoryDropDown from '../Categories/CategoryDropDown';
 
 //Form schema
 const formSchema = Yup.object({
-  title: Yup.string().required("Title is required"),
-  description: Yup.string().required("Description is required"),
-  category: Yup.object().required("Category is required"),
-  image: Yup.string().required("Image is required"),
+  title: Yup.string().required('Title is required'),
+  description: Yup.string().required('Description is required'),
+  category: Yup.object().required('Category is required'),
+  image: Yup.string().required('Image is required'),
 });
 //css for dropzone
 const Container = styled.div`
@@ -34,17 +34,17 @@ export default function CreatePost() {
   const dispatch = useDispatch();
 
   //select store data
-  const post = useSelector(state => state?.post);
+  const post = useSelector((state) => state?.post);
   const { isCreated, loading, appErr, serverErr } = post;
   //formik
   const formik = useFormik({
     initialValues: {
-      title: "",
-      description: "",
-      category: "",
-      image: "",
+      title: '',
+      description: '',
+      category: '',
+      image: '',
     },
-    onSubmit: values => {
+    onSubmit: (values) => {
       //dispath the action
       console.log(values);
       const data = {
@@ -95,8 +95,8 @@ export default function CreatePost() {
                   {/* Title */}
                   <input
                     value={formik.values.title}
-                    onChange={formik.handleChange("title")}
-                    onBlur={formik.handleBlur("title")}
+                    onChange={formik.handleChange('title')}
+                    onBlur={formik.handleBlur('title')}
                     id="title"
                     name="title"
                     type="title"
@@ -133,8 +133,8 @@ export default function CreatePost() {
                 {/* Description */}
                 <textarea
                   value={formik.values.description}
-                  onChange={formik.handleChange("description")}
-                  onBlur={formik.handleBlur("description")}
+                  onChange={formik.handleChange('description')}
+                  onBlur={formik.handleBlur('description')}
                   rows="5"
                   cols="10"
                   className="rounded-lg appearance-none block w-full py-3 px-3 text-base text-center leading-tight text-gray-600 bg-transparent focus:bg-transparent  border border-gray-200 focus:border-gray-500  focus:outline-none"
@@ -149,18 +149,18 @@ export default function CreatePost() {
                 </label>
                 <Container className="container bg-gray-700">
                   <Dropzone
-                    onBlur={formik.handleBlur("image")}
+                    onBlur={formik.handleBlur('image')}
                     accept="image/jpeg, image/png"
-                    onDrop={acceptedFiles => {
-                      formik.setFieldValue("image", acceptedFiles[0]);
+                    onDrop={(acceptedFiles) => {
+                      formik.setFieldValue('image', acceptedFiles[0]);
                     }}
                   >
                     {({ getRootProps, getInputProps }) => (
                       <div className="container">
                         <div
                           {...getRootProps({
-                            className: "dropzone",
-                            onDrop: event => event.stopPropagation(),
+                            className: 'dropzone',
+                            onDrop: (event) => event.stopPropagation(),
                           })}
                         >
                           <input {...getInputProps()} />
