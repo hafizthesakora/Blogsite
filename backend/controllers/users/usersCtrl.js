@@ -1,11 +1,12 @@
-const expressAsyncHandler = require("express-async-handler");
-const sgMail = require("@sendgrid/mail");
-const fs = require("fs");
-const crypto = require("crypto");
-const generateToken = require("../../config/token/generateToken");
-const User = require("../../model/user/User");
-const validateMongodbId = require("../../utils/validateMongodbID");
-const cloudinaryUploadImg = require("../../utils/cloudinary");
+const expressAsyncHandler = require('express-async-handler');
+const sgMail = require('@sendgrid/mail');
+const nodemailer = require('nodemailer');
+const fs = require('fs');
+const crypto = require('crypto');
+const generateToken = require('../../config/token/generateToken');
+const User = require('../../model/user/User');
+const validateMongodbId = require('../../utils/validateMongodbID');
+const cloudinaryUploadImg = require('../../utils/cloudinary');
 sgMail.setApiKey(process.env.SEND_GRID_API_KEY);
 
 //-------------------------------------
@@ -16,7 +17,7 @@ const userRegisterCtrl = expressAsyncHandler(async (req, res) => {
   //Check if user Exist
   const userExists = await User.findOne({ email: req?.body?.email });
 
-  if (userExists) throw new Error("User already exists");
+  if (userExists) throw new Error('User already exists');
   try {
     //Register user
     const user = await User.create({
@@ -49,10 +50,11 @@ const loginUserCtrl = expressAsyncHandler(async (req, res) => {
       profilePhoto: userFound?.profilePhoto,
       isAdmin: userFound?.isAdmin,
       token: generateToken(userFound?._id),
+      isVerified: userFound?.isAccountVerified,
     });
   } else {
     res.status(401);
-    throw new Error("Invalid Login Credentials");
+    throw new Error('Invalid Login Credentials');
   }
 });
 
@@ -107,7 +109,7 @@ const userProfileCtrl = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongodbId(id);
   try {
-    const myProfile = await User.findById(id).populate("posts");
+    const myProfile = await User.findById(id).populate('posts');
     res.json(myProfile);
   } catch (error) {
     res.json(error);
@@ -171,10 +173,10 @@ const followingUserCtrl = expressAsyncHandler(async (req, res) => {
   const targetUser = await User.findById(followId);
 
   const alreadyFollowing = targetUser?.followers?.find(
-    user => user?.toString() === loginUserId.toString()
+    (user) => user?.toString() === loginUserId.toString()
   );
 
-  if (alreadyFollowing) throw new Error("You have already followed this user");
+  if (alreadyFollowing) throw new Error('You have already followed this user');
 
   //1. Find the user you want to follow and update it's followers field
   await User.findByIdAndUpdate(
@@ -194,7 +196,7 @@ const followingUserCtrl = expressAsyncHandler(async (req, res) => {
     },
     { new: true }
   );
-  res.json("You have successfully followed this user");
+  res.json('You have successfully followed this user');
 });
 
 //------------------------------
@@ -217,12 +219,12 @@ const unfollowUserCtrl = expressAsyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     loginUserId,
     {
-      $pull: { following: unFollowId },
+      $pull: { following: loginUserId },
     },
     { new: true }
   );
 
-  res.json("You have successfully unfollowed this user");
+  res.json('You have successfully unfollowed this user');
 });
 
 //------------------------------
@@ -270,26 +272,55 @@ const generateVerificationTokenCtrl = expressAsyncHandler(async (req, res) => {
   const user = await User.findById(loginUserId);
 
   try {
-    //Generate token
-    const verificationToken = await user.createAccountVerificationToken();
-    //save the user
-    await user.save();
-    console.log(verificationToken);
-    //build your message
+    let transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.PASS,
+      },
+    });
 
+    //Generate token
+    const verificationToken = await user?.createAccountVerificationToken();
+    //   //save the user
+    await user.save();
     const resetURL = `If you were requested to verify your account, verify now within 10 minutes, otherwise ignore this message <a href="http://localhost:3000/verify-account/${verificationToken}">Click to verify your account</a>`;
-    const msg = {
-      to: "ffdfd@gmail.com",
-      from: "twentekghana@gmail.com",
-      subject: "Verify your account",
+
+    let msg = {
+      from: 'User email', // Sender email
+      to: user?.email, // Receiver email
+      subject: 'Verify your account', // Title email
       html: resetURL,
     };
 
-    await sgMail.send(msg);
+    await transporter.sendMail(msg);
+
     res.json(resetURL);
   } catch (error) {
     res.json(error);
   }
+
+  // try {
+  //   //Generate token
+  //   const verificationToken = await user?.createAccountVerificationToken();
+  //   //save the user
+  //   await user.save();
+  //   console.log(verificationToken);
+  //   //build your message
+
+  //   const resetURL = `If you were requested to verify your account, verify now within 10 minutes, otherwise ignore this message <a href="http://localhost:3000/verify-account/${verificationToken}">Click to verify your account</a>`;
+  //   const msg = {
+  //     to: user?.email,
+  //     from: 'twentekghana@gmail.com',
+  //     subject: 'Verify your account',
+  //     html: resetURL,
+  //   };
+
+  //   await sgMail.send(msg);
+  //   res.json(resetURL);
+  // } catch (error) {
+  //   res.json(error);
+  // }
 });
 
 //------------------------------
@@ -297,13 +328,13 @@ const generateVerificationTokenCtrl = expressAsyncHandler(async (req, res) => {
 //------------------------------
 const accountVerificationCtrl = expressAsyncHandler(async (req, res) => {
   const { token } = req.body;
-  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
   //find this user by token
   const userFound = await User.findOne({
     accountVerificationToken: hashedToken,
     accountVerificationTokenExpires: { $gt: new Date() },
   });
-  if (!userFound) throw new Error("Token expired, try again later");
+  if (!userFound) throw new Error('Token expired, try again later');
   //update the proprt to true
   userFound.isAccountVerified = true;
   userFound.accountVerificationToken = undefined;
@@ -321,7 +352,7 @@ const forgetPasswordToken = expressAsyncHandler(async (req, res) => {
   const { email } = req.body;
 
   const user = await User.findOne({ email });
-  if (!user) throw new Error("User Not Found");
+  if (!user) throw new Error('User Not Found');
 
   try {
     //Create token
@@ -333,8 +364,8 @@ const forgetPasswordToken = expressAsyncHandler(async (req, res) => {
     const resetURL = `If you were requested to reset your password, reset now within 10 minutes, otherwise ignore this message <a href="http://localhost:3000/reset-password/${token}">Click to Reset</a>`;
     const msg = {
       to: email,
-      from: "twentekghana@gmail.com",
-      subject: "Reset Password",
+      from: 'twentekghana@gmail.com',
+      subject: 'Reset Password',
       html: resetURL,
     };
 
@@ -353,14 +384,14 @@ const forgetPasswordToken = expressAsyncHandler(async (req, res) => {
 
 const passwordResetCtrl = expressAsyncHandler(async (req, res) => {
   const { token, password } = req.body;
-  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
   //find this user by token
   const user = await User.findOne({
     passwordResetToken: hashedToken,
     passwordResetExpires: { $gt: Date.now() },
   });
-  if (!user) throw new Error("Token Expired, try again later");
+  if (!user) throw new Error('Token Expired, try again later');
 
   //Update/change the password
   user.password = password;
@@ -377,7 +408,7 @@ const profilePhotoUploadCtrl = expressAsyncHandler(async (req, res) => {
   //Find the login user
   const { _id } = req.user;
 
-  //1. Get the oath to img
+  //1. Get the path to img
   const localPath = `public/images/profile/${req.file.filename}`;
   //2.Upload to cloudinary
   const imgUploaded = await cloudinaryUploadImg(localPath);
